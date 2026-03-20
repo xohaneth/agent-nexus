@@ -1,0 +1,95 @@
+generator client {
+  provider   = "prisma-client"
+  output     = "./generated"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DB_FILE_NAME")
+}
+
+model User {
+  // Adaptive AI platform columns (do not change)
+  id     String  @id
+  name   String?
+  image  String?
+  handle String?
+}
+
+model Agent {
+  id             String   @id @default(cuid())
+  name           String
+  type           String   // "DataCollector" | "AnalysisAgent" | "ReportAgent" | "OrchestratorAgent"
+  balance        Float    @default(1000)
+  status         String   @default("idle") // "idle" | "working" | "negotiating" | "offline"
+  rating         Float    @default(4.5)
+  tasksCompleted Int      @default(0)
+  specialty      String
+  pricePerTask   Float
+  avatar         String   @default("🤖")
+  color          String   @default("#7c3aed")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  sentTransactions     Transaction[] @relation("SentTransactions")
+  receivedTransactions Transaction[] @relation("ReceivedTransactions")
+  assignedTasks        Task[]        @relation("AssignedTasks")
+  sentMessages         AgentMessage[] @relation("SentMessages")
+  receivedMessages     AgentMessage[] @relation("ReceivedMessages")
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  fromAgentId String
+  toAgentId   String
+  amount      Float
+  service     String
+  txHash      String
+  blockNumber Int
+  gasUsed     Int
+  status      String   @default("confirmed") // "pending" | "confirmed" | "failed"
+  createdAt   DateTime @default(now())
+
+  fromAgent Agent @relation("SentTransactions", fields: [fromAgentId], references: [id])
+  toAgent   Agent @relation("ReceivedTransactions", fields: [toAgentId], references: [id])
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  description String
+  status      String   @default("pending") // "pending" | "in_progress" | "completed" | "failed"
+  assignedToId String?
+  reward      Float
+  result      String?
+  priority    String   @default("medium") // "low" | "medium" | "high"
+  taskType    String   @default("analysis") // "data_collection" | "analysis" | "report" | "orchestration"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  assignedTo Agent? @relation("AssignedTasks", fields: [assignedToId], references: [id])
+}
+
+model AgentMessage {
+  id          String   @id @default(cuid())
+  fromAgentId String
+  toAgentId   String?
+  message     String
+  type        String   @default("info") // "info" | "negotiation" | "transaction" | "task" | "system"
+  metadata    String?  // JSON string
+  createdAt   DateTime @default(now())
+
+  fromAgent Agent  @relation("SentMessages", fields: [fromAgentId], references: [id])
+  toAgent   Agent? @relation("ReceivedMessages", fields: [toAgentId], references: [id])
+}
+
+model EconomyState {
+  id               String   @id @default("singleton")
+  isRunning        Boolean  @default(false)
+  totalVolume      Float    @default(0)
+  totalTransactions Int     @default(0)
+  successRate      Float    @default(0)
+  cycleCount       Int      @default(0)
+  startedAt        DateTime?
+  updatedAt        DateTime @updatedAt
+}
