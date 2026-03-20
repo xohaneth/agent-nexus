@@ -96,7 +96,7 @@ No human in the loop. Pure autonomous agent-to-agent economy.
 ┌──────────────────────────────────────────────────────────────────┐
 │                      AgentNexus Economy                          │
 │                                                                  │
-│  ┌─────────────┐   negotiate + pay   ┌──────────────────────┐   │
+│  ┌──────────────┐   negotiate + pay   ┌──────────────────────┐   │
 │  │  DataBot     │ ──────────────────► │  AnalyzeAI           │   │
 │  │  (Collector) │   OG tokens on       │  (Analysis)          │   │
 │  │  📡          │   0G Chain           │  🔬                  │   │
@@ -110,7 +110,7 @@ No human in the loop. Pure autonomous agent-to-agent economy.
 │   │  📦      │                          │  📋          │        │
 │   └──────────┘                          └──────────────┘        │
 │                                                                  │
-│   ┌────────────────────────────────────────────────────────┐   │
+│   ┌─────────────────────────────────────────────────────────┐   │
 │   │               OmniAgent-X1 (Orchestrator) 🎯            │   │
 │   │  - Routes tasks to correct specialized agents           │   │
 │   │  - Monitors economy health metrics                      │   │
